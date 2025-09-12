@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "pipeline_id": "2025-09-12T05:28:48.860902",
+    "config": {
+      "input_sources": [
+        "/home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data"
+      ],
+      "input_types": [
+        "text"
+      ],
+      "use_llm": false,
+      "use_vlm": false,
+      "llm_model": "gpt-3.5-turbo",
+      "vlm_model": "blip-base",
+      "entity_extraction": true,
+      "relation_extraction": true,
+      "entity_confidence_threshold": 0.6,
+      "relation_confidence_threshold": 0.6,
+      "kg_backend": "networkx",
+      "kg_output_format": "json",
+      "output_dir": "/home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output",
+      "save_intermediate_results": true,
+      "max_workers": 2,
+      "batch_size": 5
+    }
+  },
+  "data": [],
+  "entities": {},
+  "relations": [],
+  "knowledge_graph": {
+    "backend": "networkx",
+    "build_statistics": {
+      "entities_added": 0,
+      "relations_added": 0,
+      "total_entities": 0,
+      "total_relations": 0
+    },
+    "graph_statistics": {
+      "entities": 0,
+      "relations": 0,
+      "entity_types": {},
+      "relation_types": {},
+      "nodes": 0,
+      "edges": 0
+    }
+  },
+  "statistics": {}
+}

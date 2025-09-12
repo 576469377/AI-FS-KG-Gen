@@ -1,0 +1,6 @@
+data_ingestion
+data_processing
+knowledge_extraction
+knowledge_graph
+pipeline
+utils

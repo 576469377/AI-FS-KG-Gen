@@ -1,3 +1,23 @@
+Metadata-Version: 2.1
+Name: ai-fs-kg-gen
+Version: 0.1.0
+Summary: A large-scale multi-source heterogeneous food safety knowledge graph generation pipeline
+Author: AI-FS-KG-Gen Team
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+
 # AI-FS-KG-Gen
 
 A large-scale multi-source heterogeneous food safety knowledge graph generation pipeline using advanced AI technologies including Large Language Models (LLM), Vision Language Models (VLM), and Knowledge Graph (KG) techniques.

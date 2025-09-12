@@ -1,0 +1,115 @@
+2025-09-12 05:28:11 | INFO     | utils.logger:setup_logger:42 - Logger initialized successfully
+2025-09-12 05:28:11 | INFO     | data_ingestion.text_loader:__init__:28 - TextLoader initialized with formats: ['.txt', '.md', '.html', '.pdf']
+2025-09-12 05:28:11 | INFO     | data_ingestion.image_loader:__init__:29 - ImageLoader initialized with formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
+2025-09-12 05:28:11 | INFO     | data_ingestion.structured_data_loader:__init__:27 - StructuredDataLoader initialized with formats: ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+2025-09-12 05:28:11 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:28:11 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:28:11 | ERROR    | knowledge_extraction.entity_extractor:_load_model:64 - Failed to load NER model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-09-12 05:28:48 | INFO     | utils.logger:setup_logger:42 - Logger initialized successfully
+2025-09-12 05:28:48 | INFO     | data_ingestion.text_loader:__init__:28 - TextLoader initialized with formats: ['.txt', '.md', '.html', '.pdf']
+2025-09-12 05:28:48 | INFO     | data_ingestion.image_loader:__init__:29 - ImageLoader initialized with formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
+2025-09-12 05:28:48 | INFO     | data_ingestion.structured_data_loader:__init__:27 - StructuredDataLoader initialized with formats: ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+2025-09-12 05:28:48 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:28:48 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:28:48 | WARNING  | knowledge_extraction.entity_extractor:_load_model:51 - spaCy model 'en_core_web_sm' not found. Using pattern-based extraction only.
+2025-09-12 05:28:48 | INFO     | knowledge_extraction.entity_extractor:__init__:38 - EntityExtractor initialized with spacy model
+2025-09-12 05:28:48 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:28:48 | INFO     | knowledge_extraction.relation_extractor:__init__:40 - RelationExtractor initialized with pattern approach
+2025-09-12 05:28:48 | INFO     | knowledge_graph.kg_builder:__init__:46 - KnowledgeGraphBuilder initialized with networkx backend
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:__init__:108 - AI-FS-KG-Gen pipeline initialized
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:155 - Starting AI-FS-KG-Gen pipeline execution
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:159 - Step 1: Data ingestion
+2025-09-12 05:28:48 | INFO     | data_ingestion.text_loader:load_directory:88 - Loading text files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:28:48 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_2.txt
+2025-09-12 05:28:48 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_3.txt
+2025-09-12 05:28:48 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_1.txt
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:_ingest_data:203 - Ingested 3 data items
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:163 - Step 2: Data processing
+2025-09-12 05:28:48 | WARNING  | pipeline.orchestrator:_process_single_item:301 - Error processing item: 'AIFSKGPipeline' object has no attribute 'llm_processor'
+2025-09-12 05:28:48 | WARNING  | pipeline.orchestrator:_process_single_item:301 - Error processing item: 'AIFSKGPipeline' object has no attribute 'llm_processor'
+2025-09-12 05:28:48 | WARNING  | pipeline.orchestrator:_process_single_item:301 - Error processing item: 'AIFSKGPipeline' object has no attribute 'llm_processor'
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:_process_data:286 - Processed 0 data items
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:167 - Step 3: Knowledge extraction
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:_extract_knowledge:398 - Extracted 0 entities and 0 relations
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:171 - Step 4: Knowledge graph construction
+2025-09-12 05:28:48 | INFO     | knowledge_graph.kg_builder:build_from_extractions:225 - Building knowledge graph from extractions
+2025-09-12 05:28:48 | INFO     | knowledge_graph.kg_builder:build_from_extractions:265 - Built knowledge graph: {'entities_added': 0, 'relations_added': 0, 'total_entities': 0, 'total_relations': 0}
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:_build_knowledge_graph:436 - Built knowledge graph with {'entities_added': 0, 'relations_added': 0, 'total_entities': 0, 'total_relations': 0}
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:175 - Step 5: Output generation
+2025-09-12 05:28:48 | INFO     | knowledge_graph.kg_builder:export_graph:404 - Exported knowledge graph to /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output/knowledge_graph_20250912_052848.json
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:_generate_outputs:460 - Generated outputs in /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output
+2025-09-12 05:28:48 | INFO     | pipeline.orchestrator:run:181 - Pipeline execution completed successfully
+2025-09-12 05:33:25 | INFO     | utils.logger:setup_logger:42 - Logger initialized successfully
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:__init__:28 - TextLoader initialized with formats: ['.txt', '.md', '.html', '.pdf']
+2025-09-12 05:33:25 | INFO     | data_ingestion.image_loader:__init__:29 - ImageLoader initialized with formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
+2025-09-12 05:33:25 | INFO     | data_ingestion.structured_data_loader:__init__:27 - StructuredDataLoader initialized with formats: ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+2025-09-12 05:33:25 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:33:25 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:33:25 | WARNING  | knowledge_extraction.entity_extractor:_load_model:51 - spaCy model 'en_core_web_sm' not found. Using pattern-based extraction only.
+2025-09-12 05:33:25 | INFO     | knowledge_extraction.entity_extractor:__init__:38 - EntityExtractor initialized with spacy model
+2025-09-12 05:33:25 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:33:25 | INFO     | knowledge_extraction.relation_extractor:__init__:40 - RelationExtractor initialized with pattern approach
+2025-09-12 05:33:25 | INFO     | knowledge_graph.kg_builder:__init__:46 - KnowledgeGraphBuilder initialized with networkx backend
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:__init__:108 - AI-FS-KG-Gen pipeline initialized
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:169 - Starting AI-FS-KG-Gen pipeline execution
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:173 - Step 1: Data ingestion
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_directory:88 - Loading text files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_2.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_3.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/bacterial_contamination.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/food_allergens.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/listeria_prevention.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_1.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/salmonella_outbreak.txt
+2025-09-12 05:33:25 | INFO     | data_ingestion.structured_data_loader:load_directory:260 - Loading structured data files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:33:25 | INFO     | data_ingestion.structured_data_loader:load_csv:41 - Loading CSV file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/food_safety_data.csv
+2025-09-12 05:33:25 | INFO     | data_ingestion.structured_data_loader:load_json:84 - Loading JSON file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/outbreak_data.json
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:_ingest_data:217 - Ingested 9 data items
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:177 - Step 2: Data processing
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:_process_data:300 - Processed 9 data items
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:181 - Step 3: Knowledge extraction
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:_extract_knowledge:412 - Extracted 235 entities and 27 relations
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:185 - Step 4: Knowledge graph construction
+2025-09-12 05:33:25 | INFO     | knowledge_graph.kg_builder:build_from_extractions:225 - Building knowledge graph from extractions
+2025-09-12 05:33:25 | INFO     | knowledge_graph.kg_builder:build_from_extractions:265 - Built knowledge graph: {'entities_added': 170, 'relations_added': 27, 'total_entities': 285, 'total_relations': 27}
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:_build_knowledge_graph:450 - Built knowledge graph with {'entities_added': 170, 'relations_added': 27, 'total_entities': 285, 'total_relations': 27}
+2025-09-12 05:33:25 | INFO     | pipeline.orchestrator:run:189 - Step 5: Output generation
+2025-09-12 05:33:25 | ERROR    | pipeline.orchestrator:run:199 - Pipeline execution failed: Object of type DataFrame is not JSON serializable
+2025-09-12 05:34:12 | INFO     | utils.logger:setup_logger:42 - Logger initialized successfully
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:__init__:28 - TextLoader initialized with formats: ['.txt', '.md', '.html', '.pdf']
+2025-09-12 05:34:12 | INFO     | data_ingestion.image_loader:__init__:29 - ImageLoader initialized with formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
+2025-09-12 05:34:12 | INFO     | data_ingestion.structured_data_loader:__init__:27 - StructuredDataLoader initialized with formats: ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+2025-09-12 05:34:12 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:34:12 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:34:12 | WARNING  | knowledge_extraction.entity_extractor:_load_model:51 - spaCy model 'en_core_web_sm' not found. Using pattern-based extraction only.
+2025-09-12 05:34:12 | INFO     | knowledge_extraction.entity_extractor:__init__:38 - EntityExtractor initialized with spacy model
+2025-09-12 05:34:12 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:34:12 | INFO     | knowledge_extraction.relation_extractor:__init__:40 - RelationExtractor initialized with pattern approach
+2025-09-12 05:34:12 | INFO     | knowledge_graph.kg_builder:__init__:46 - KnowledgeGraphBuilder initialized with networkx backend
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:__init__:108 - AI-FS-KG-Gen pipeline initialized
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:169 - Starting AI-FS-KG-Gen pipeline execution
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:173 - Step 1: Data ingestion
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_directory:88 - Loading text files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_2.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_3.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/bacterial_contamination.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/food_allergens.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/listeria_prevention.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_1.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/salmonella_outbreak.txt
+2025-09-12 05:34:12 | INFO     | data_ingestion.structured_data_loader:load_directory:260 - Loading structured data files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:34:12 | INFO     | data_ingestion.structured_data_loader:load_csv:41 - Loading CSV file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/food_safety_data.csv
+2025-09-12 05:34:12 | INFO     | data_ingestion.structured_data_loader:load_json:84 - Loading JSON file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/outbreak_data.json
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_ingest_data:217 - Ingested 9 data items
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:177 - Step 2: Data processing
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_process_data:300 - Processed 9 data items
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:181 - Step 3: Knowledge extraction
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_extract_knowledge:412 - Extracted 235 entities and 27 relations
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:185 - Step 4: Knowledge graph construction
+2025-09-12 05:34:12 | INFO     | knowledge_graph.kg_builder:build_from_extractions:225 - Building knowledge graph from extractions
+2025-09-12 05:34:12 | INFO     | knowledge_graph.kg_builder:build_from_extractions:265 - Built knowledge graph: {'entities_added': 170, 'relations_added': 27, 'total_entities': 285, 'total_relations': 27}
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_build_knowledge_graph:450 - Built knowledge graph with {'entities_added': 170, 'relations_added': 27, 'total_entities': 285, 'total_relations': 27}
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:189 - Step 5: Output generation
+2025-09-12 05:34:12 | INFO     | knowledge_graph.kg_builder:export_graph:404 - Exported knowledge graph to /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output/knowledge_graph_20250912_053412.json
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_generate_outputs:477 - Generated outputs in /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output
+2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:195 - Pipeline execution completed successfully

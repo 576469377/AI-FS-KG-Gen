@@ -1,0 +1,71 @@
+# Model configurations for different AI components
+
+# Large Language Models
+llm_models:
+  gpt-3.5-turbo:
+    provider: "openai"
+    model_name: "gpt-3.5-turbo"
+    temperature: 0.7
+    max_tokens: 2000
+    context_window: 4000
+  
+  gpt-4:
+    provider: "openai"
+    model_name: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2000
+    context_window: 8000
+  
+  llama2-7b:
+    provider: "huggingface"
+    model_name: "meta-llama/Llama-2-7b-chat-hf"
+    temperature: 0.7
+    max_tokens: 2000
+    context_window: 4000
+
+# Vision Language Models
+vlm_models:
+  blip-base:
+    provider: "huggingface"
+    model_name: "Salesforce/blip-image-captioning-base"
+    max_length: 50
+  
+  blip-large:
+    provider: "huggingface"
+    model_name: "Salesforce/blip-image-captioning-large"
+    max_length: 50
+  
+  clip-vit:
+    provider: "huggingface"
+    model_name: "openai/clip-vit-base-patch32"
+    similarity_threshold: 0.7
+
+# Embedding Models
+embedding_models:
+  sentence-transformers:
+    model_name: "sentence-transformers/all-MiniLM-L6-v2"
+    dimension: 384
+    batch_size: 32
+  
+  openai-embedding:
+    provider: "openai"
+    model_name: "text-embedding-ada-002"
+    dimension: 1536
+    batch_size: 16
+
+# NER Models for entity extraction
+ner_models:
+  spacy-en:
+    model_name: "en_core_web_sm"
+    provider: "spacy"
+  
+  biobert:
+    model_name: "dmis-lab/biobert-base-cased-v1.1"
+    provider: "huggingface"
+
+# Knowledge Graph settings
+knowledge_graph:
+  entity_similarity_threshold: 0.85
+  relation_confidence_threshold: 0.7
+  max_entities_per_text: 50
+  max_relations_per_text: 100
