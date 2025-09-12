@@ -453,9 +453,12 @@ class AIFSKGPipeline:
         """Generate various output formats"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
+        # Convert any DataFrames to serializable format
+        serializable_results = self._make_serializable(self.results.copy())
+        
         # Save complete results
         results_file = self.output_dir / f"pipeline_results_{timestamp}.json"
-        save_config(self.results, results_file)
+        save_config(serializable_results, results_file)
         
         # Export knowledge graph
         kg_file = self.output_dir / f"knowledge_graph_{timestamp}.{self.config.kg_output_format}"
@@ -472,6 +475,25 @@ class AIFSKGPipeline:
             save_config(self.results['relations'], relations_file)
         
         logger.info(f"Generated outputs in {self.output_dir}")
+    
+    def _make_serializable(self, obj):
+        """Convert objects to JSON serializable format"""
+        import pandas as pd
+        
+        if isinstance(obj, dict):
+            return {k: self._make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._make_serializable(item) for item in obj]
+        elif isinstance(obj, pd.DataFrame):
+            return obj.to_dict('records')
+        elif hasattr(obj, '__dict__'):
+            return str(obj)
+        else:
+            try:
+                json.dumps(obj)  # Test if serializable
+                return obj
+            except TypeError:
+                return str(obj)
     
     def _update_statistics(self):
         """Update final pipeline statistics"""
