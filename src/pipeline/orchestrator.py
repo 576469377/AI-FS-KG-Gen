@@ -15,7 +15,25 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from utils.logger import setup_logger, get_logger
 from utils.helpers import load_config, save_config
 from data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
-from data_processing import LLMProcessor, VLMProcessor, TextCleaner
+from data_processing import TextCleaner
+
+logger = get_logger(__name__)
+
+# Optional imports for LLM and VLM processing
+try:
+    from data_processing import LLMProcessor
+    HAS_LLM = True
+except ImportError as e:
+    HAS_LLM = False
+    logger.warning(f"LLM processor not available: {e}")
+
+try:
+    from data_processing import VLMProcessor
+    HAS_VLM = True
+except ImportError as e:
+    HAS_VLM = False
+    logger.warning(f"VLM processor not available: {e}")
+
 from knowledge_extraction import EntityExtractor, RelationExtractor
 from knowledge_graph import KnowledgeGraphBuilder
 
@@ -121,7 +139,7 @@ class AIFSKGPipeline:
         self.llm_processor = None
         self.vlm_processor = None
         
-        if self.config.use_llm:
+        if self.config.use_llm and HAS_LLM:
             try:
                 self.llm_processor = LLMProcessor(
                     model_type=self.config.llm_model,
@@ -130,13 +148,19 @@ class AIFSKGPipeline:
             except Exception as e:
                 logger.warning(f"Failed to initialize LLM processor: {e}")
                 self.llm_processor = None
+        elif self.config.use_llm and not HAS_LLM:
+            logger.warning("LLM processing requested but LLM dependencies not available")
         
-        if self.config.use_vlm:
+        if self.config.use_vlm and HAS_VLM:
             try:
-                self.vlm_processor = VLMProcessor(model_type=self.config.vlm_model)
+                self.vlm_processor = VLMProcessor(
+                    model_type=self.config.vlm_model
+                )
             except Exception as e:
                 logger.warning(f"Failed to initialize VLM processor: {e}")
                 self.vlm_processor = None
+        elif self.config.use_vlm and not HAS_VLM:
+            logger.warning("VLM processing requested but VLM dependencies not available")
         
         # Knowledge extraction
         self.entity_extractor = None

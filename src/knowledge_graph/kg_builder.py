@@ -5,9 +5,6 @@ from typing import List, Dict, Any, Optional, Tuple, Set
 import networkx as nx
 import json
 from pathlib import Path
-from neo4j import GraphDatabase
-import py2neo
-from rdflib import Graph, URIRef, Literal, Namespace, RDF, RDFS
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -16,6 +13,28 @@ from utils.logger import get_logger
 from utils.helpers import normalize_entity, generate_hash, safe_filename
 
 logger = get_logger(__name__)
+
+# Optional imports
+try:
+    from neo4j import GraphDatabase
+    import py2neo
+    HAS_NEO4J = True
+except ImportError:
+    GraphDatabase = None
+    py2neo = None
+    HAS_NEO4J = False
+
+try:
+    from rdflib import Graph, URIRef, Literal, Namespace, RDF, RDFS
+    HAS_RDF = True
+except ImportError:
+    Graph = None
+    URIRef = None
+    Literal = None
+    Namespace = None
+    RDF = None
+    RDFS = None
+    HAS_RDF = False
 
 class KnowledgeGraphBuilder:
     """
@@ -51,6 +70,12 @@ class KnowledgeGraphBuilder:
             self.graph = nx.MultiDiGraph()
             
         elif self.backend == "neo4j":
+            if not HAS_NEO4J:
+                logger.warning("Neo4j backend requested but dependencies not available. Falling back to NetworkX.")
+                self.backend = "networkx"
+                self.graph = nx.MultiDiGraph()
+                return
+                
             try:
                 self.driver = GraphDatabase.driver(
                     self.config["database_url"],
@@ -68,6 +93,12 @@ class KnowledgeGraphBuilder:
                 self.graph = nx.MultiDiGraph()
                 
         elif self.backend == "rdf":
+            if not HAS_RDF:
+                logger.warning("RDF backend requested but dependencies not available. Falling back to NetworkX.")
+                self.backend = "networkx"
+                self.graph = nx.MultiDiGraph()
+                return
+                
             self.graph = Graph()
             # Define namespaces
             self.fs_ns = Namespace("http://foodsafety.org/ontology/")

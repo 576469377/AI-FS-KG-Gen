@@ -113,3 +113,38 @@
 2025-09-12 05:34:12 | INFO     | knowledge_graph.kg_builder:export_graph:404 - Exported knowledge graph to /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output/knowledge_graph_20250912_053412.json
 2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:_generate_outputs:477 - Generated outputs in /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output
 2025-09-12 05:34:12 | INFO     | pipeline.orchestrator:run:195 - Pipeline execution completed successfully
+2025-09-12 05:49:06 | INFO     | utils.logger:setup_logger:42 - Logger initialized successfully
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:__init__:28 - TextLoader initialized with formats: ['.txt', '.md', '.html', '.pdf']
+2025-09-12 05:49:06 | INFO     | data_ingestion.image_loader:__init__:29 - ImageLoader initialized with formats: ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
+2025-09-12 05:49:06 | INFO     | data_ingestion.structured_data_loader:__init__:27 - StructuredDataLoader initialized with formats: ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+2025-09-12 05:49:06 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:49:06 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:49:06 | WARNING  | knowledge_extraction.entity_extractor:_load_model:71 - spaCy model 'en_core_web_sm' not found. Using pattern-based extraction only.
+2025-09-12 05:49:06 | INFO     | knowledge_extraction.entity_extractor:__init__:53 - EntityExtractor initialized with spacy model
+2025-09-12 05:49:06 | INFO     | data_processing.text_cleaner:__init__:47 - TextCleaner initialized
+2025-09-12 05:49:06 | INFO     | knowledge_extraction.relation_extractor:__init__:55 - RelationExtractor initialized with pattern approach
+2025-09-12 05:49:06 | INFO     | knowledge_graph.kg_builder:__init__:65 - KnowledgeGraphBuilder initialized with networkx backend
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:__init__:126 - AI-FS-KG-Gen pipeline initialized
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:193 - Starting AI-FS-KG-Gen pipeline execution
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:197 - Step 1: Data ingestion
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_directory:88 - Loading text files from directory: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_2.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_3.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/bacterial_contamination.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/food_allergens.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/listeria_prevention.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/sample_text_1.txt
+2025-09-12 05:49:06 | INFO     | data_ingestion.text_loader:load_file:45 - Loading text file: /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/examples/sample_data/salmonella_outbreak.txt
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:_ingest_data:241 - Ingested 7 data items
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:201 - Step 2: Data processing
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:_process_data:324 - Processed 7 data items
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:205 - Step 3: Knowledge extraction
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:_extract_knowledge:436 - Extracted 203 entities and 27 relations
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:209 - Step 4: Knowledge graph construction
+2025-09-12 05:49:06 | INFO     | knowledge_graph.kg_builder:build_from_extractions:256 - Building knowledge graph from extractions
+2025-09-12 05:49:06 | INFO     | knowledge_graph.kg_builder:build_from_extractions:296 - Built knowledge graph: {'entities_added': 154, 'relations_added': 27, 'total_entities': 253, 'total_relations': 27}
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:_build_knowledge_graph:474 - Built knowledge graph with {'entities_added': 154, 'relations_added': 27, 'total_entities': 253, 'total_relations': 27}
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:213 - Step 5: Output generation
+2025-09-12 05:49:06 | INFO     | knowledge_graph.kg_builder:export_graph:435 - Exported knowledge graph to /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output/knowledge_graph_20250912_054906.json
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:_generate_outputs:501 - Generated outputs in /home/runner/work/AI-FS-KG-Gen/AI-FS-KG-Gen/output
+2025-09-12 05:49:06 | INFO     | pipeline.orchestrator:run:219 - Pipeline execution completed successfully

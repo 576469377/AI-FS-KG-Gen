@@ -4,8 +4,6 @@ Relation extraction for food safety knowledge graph construction
 import re
 from typing import List, Dict, Any, Optional, Tuple, Set
 from itertools import combinations
-import spacy
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -15,6 +13,23 @@ from utils.helpers import normalize_entity
 from data_processing.text_cleaner import TextCleaner
 
 logger = get_logger(__name__)
+
+# Optional imports
+try:
+    import spacy
+    HAS_SPACY = True
+except ImportError:
+    spacy = None
+    HAS_SPACY = False
+
+try:
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
+    HAS_TRANSFORMERS = True
+except ImportError:
+    AutoTokenizer = None
+    AutoModelForSequenceClassification = None
+    pipeline = None
+    HAS_TRANSFORMERS = False
 
 class RelationExtractor:
     """
@@ -97,16 +112,31 @@ class RelationExtractor:
         """Load the relation extraction model"""
         try:
             if self.model_type == "spacy":
-                self.nlp = spacy.load("en_core_web_sm")
+                if not HAS_SPACY:
+                    logger.warning("spaCy not available. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    return
+                    
+                try:
+                    self.nlp = spacy.load("en_core_web_sm")
+                except OSError:
+                    logger.warning("spaCy model 'en_core_web_sm' not found. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    
             elif self.model_type == "transformer":
+                if not HAS_TRANSFORMERS:
+                    logger.warning("Transformers not available. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    return
+                    
                 # Load a relation extraction model (placeholder - would need specific model)
                 model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Fallback to similarity
                 self.tokenizer = AutoTokenizer.from_pretrained(model_name)
                 # Note: For actual relation extraction, you'd use a model trained on relation data
                 self.similarity_pipeline = pipeline("feature-extraction", model=model_name)
         except Exception as e:
-            logger.error(f"Failed to load relation extraction model: {str(e)}")
-            raise
+            logger.warning(f"Failed to load relation extraction model: {str(e)}. Falling back to pattern-based extraction.")
+            self.model_type = "pattern"
     
     def extract_relations(self, text: str, entities: Optional[Dict[str, List[Dict]]] = None, 
                          confidence_threshold: float = 0.6) -> List[Dict[str, Any]]:

@@ -3,8 +3,6 @@ Entity extraction for food safety knowledge graph construction
 """
 import re
 from typing import List, Dict, Any, Optional, Set, Tuple
-import spacy
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -14,6 +12,23 @@ from utils.helpers import normalize_entity
 from data_processing.text_cleaner import TextCleaner
 
 logger = get_logger(__name__)
+
+# Optional imports
+try:
+    import spacy
+    HAS_SPACY = True
+except ImportError:
+    spacy = None
+    HAS_SPACY = False
+
+try:
+    from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+    HAS_TRANSFORMERS = True
+except ImportError:
+    AutoTokenizer = None
+    AutoModelForTokenClassification = None
+    pipeline = None
+    HAS_TRANSFORMERS = False
 
 class EntityExtractor:
     """
@@ -41,8 +56,13 @@ class EntityExtractor:
         """Load the NER model"""
         try:
             if self.model_type == "spacy":
+                if not HAS_SPACY:
+                    logger.warning("spaCy not available. Using pattern-based extraction only.")
+                    self.model_type = "pattern"
+                    self.nlp = None
+                    return
+                    
                 try:
-                    import spacy
                     self.nlp = spacy.load("en_core_web_sm")
                     # Add custom entity types to spacy
                     if "food_safety" not in self.nlp.pipe_names:
@@ -53,6 +73,12 @@ class EntityExtractor:
                     self.nlp = None
             
             elif self.model_type == "biobert":
+                if not HAS_TRANSFORMERS:
+                    logger.warning("Transformers not available. Using pattern-based extraction only.")
+                    self.model_type = "pattern"
+                    self.nlp = None
+                    return
+                    
                 self.tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
                 self.model = AutoModelForTokenClassification.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
                 self.ner_pipeline = pipeline(
