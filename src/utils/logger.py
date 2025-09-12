@@ -4,7 +4,10 @@ Logging configuration for AI-FS-KG-Gen pipeline
 import sys
 from pathlib import Path
 from loguru import logger
-from config.settings import LOGS_DIR
+
+# Create logs directory
+LOGS_DIR = Path(__file__).parent.parent.parent / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
 
 def setup_logger(log_level: str = "INFO", log_file: str = "ai_fs_kg_gen.log") -> None:
     """

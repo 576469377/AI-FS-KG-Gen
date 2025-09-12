@@ -1,0 +1,4 @@
+Listeria monocytogenes is particularly dangerous for pregnant women and elderly.
+        Soft cheeses, deli meats, and unpasteurized milk products may contain Listeria.
+        Refrigeration temperatures below 40°F (4°C) slow bacterial growth but don't eliminate it.
+        HACCP (Hazard Analysis Critical Control Points) systems help ensure food safety.

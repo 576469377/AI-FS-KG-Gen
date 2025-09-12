@@ -1,0 +1,2 @@
+[console_scripts]
+ai-fs-kg-gen = pipeline.orchestrator:main

@@ -6,6 +6,9 @@ from typing import List, Dict, Any, Optional, Union
 import openai
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from config.settings import get_model_config
 from utils.logger import get_logger
 from utils.helpers import chunk_text, clean_text

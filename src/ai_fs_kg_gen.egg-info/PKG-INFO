@@ -1,0 +1,60 @@
+Metadata-Version: 2.1
+Name: ai-fs-kg-gen
+Version: 0.1.0
+Summary: A large-scale multi-source heterogeneous food safety knowledge graph generation pipeline
+Author: AI-FS-KG-Gen Team
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+
+# AI-FS-KG-Gen
+
+A large-scale multi-source heterogeneous food safety knowledge graph generation pipeline using advanced AI technologies including Large Language Models (LLM), Vision Language Models (VLM), and Knowledge Graph (KG) techniques.
+
+## Features
+
+- **Multi-source Data Ingestion**: Support for text, image, and structured data sources
+- **AI-powered Processing**: Integration with LLMs for text understanding and VLMs for image analysis
+- **Knowledge Extraction**: Automated entity and relationship extraction from diverse data sources
+- **Knowledge Graph Construction**: Building and managing large-scale food safety knowledge graphs
+- **Pipeline Orchestration**: Coordinated workflow for end-to-end KG generation
+
+## Architecture
+
+The pipeline consists of several core modules:
+
+1. **Data Ingestion**: Handles various data formats and sources
+2. **Data Processing**: Uses LLMs and VLMs for content understanding
+3. **Knowledge Extraction**: Extracts entities, relations, and knowledge patterns
+4. **Knowledge Graph Management**: Constructs and maintains the KG structure
+5. **Pipeline Orchestration**: Coordinates the entire workflow
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run basic pipeline example
+python examples/basic_pipeline.py
+```
+
+## Documentation
+
+- [Architecture Overview](docs/architecture.md)
+- [Usage Guide](docs/usage.md)
+
+## License
+
+MIT License

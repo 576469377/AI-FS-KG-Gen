@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "backend": "networkx",
+    "statistics": {
+      "entities": 0,
+      "relations": 0,
+      "entity_types": {},
+      "relation_types": {},
+      "nodes": 0,
+      "edges": 0
+    },
+    "entity_types": [
+      "Food_Product",
+      "Ingredient",
+      "Chemical_Compound",
+      "Pathogen",
+      "Allergen",
+      "Nutrient",
+      "Safety_Standard",
+      "Regulation",
+      "Testing_Method",
+      "Risk_Factor",
+      "Contamination_Source",
+      "Processing_Method",
+      "Storage_Condition",
+      "Temperature_Range",
+      "pH_Level",
+      "Microorganism",
+      "Toxin",
+      "Additive",
+      "Preservative",
+      "Certification"
+    ],
+    "relation_types": [
+      "contains",
+      "causes",
+      "prevents",
+      "regulates",
+      "tests_for",
+      "associated_with",
+      "derived_from",
+      "processed_by",
+      "stored_at",
+      "tolerates",
+      "exceeds",
+      "complies_with",
+      "certified_by",
+      "requires",
+      "inhibits",
+      "activates",
+      "interacts_with",
+      "classified_as",
+      "measured_by",
+      "indicates"
+    ]
+  },
+  "entities": [],
+  "relations": []
+}
