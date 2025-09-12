@@ -78,6 +78,25 @@ class PipelineConfig:
     # Processing configuration
     max_workers: int = 4
     batch_size: int = 10
+    
+    def __post_init__(self):
+        """Validate configuration after initialization"""
+        # Check confidence thresholds are valid
+        if not 0.0 <= self.entity_confidence_threshold <= 1.0:
+            raise ValueError("Entity confidence threshold must be between 0.0 and 1.0")
+        
+        if not 0.0 <= self.relation_confidence_threshold <= 1.0:
+            raise ValueError("Relation confidence threshold must be between 0.0 and 1.0")
+        
+        # Validate backend choice
+        valid_backends = ["networkx", "neo4j", "rdf"]
+        if self.kg_backend not in valid_backends:
+            raise ValueError(f"Invalid KG backend: {self.kg_backend}. Must be one of {valid_backends}")
+        
+        # Validate output format
+        valid_formats = ["json", "gexf", "rdf"]
+        if self.kg_output_format not in valid_formats:
+            raise ValueError(f"Invalid output format: {self.kg_output_format}. Must be one of {valid_formats}")
 
 class AIFSKGPipeline:
     """
@@ -103,6 +122,9 @@ class AIFSKGPipeline:
         else:
             self.config = config
         
+        # Validate configuration
+        self._validate_config()
+        
         # Initialize components
         self._init_components()
         
@@ -124,6 +146,33 @@ class AIFSKGPipeline:
         }
         
         logger.info("AI-FS-KG-Gen pipeline initialized")
+    
+    def _validate_config(self):
+        """Validate pipeline configuration"""
+        # Check input sources exist
+        for source in self.config.input_sources:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ValueError(f"Input source does not exist: {source}")
+        
+        # Check confidence thresholds are valid
+        if not 0.0 <= self.config.entity_confidence_threshold <= 1.0:
+            raise ValueError("Entity confidence threshold must be between 0.0 and 1.0")
+        
+        if not 0.0 <= self.config.relation_confidence_threshold <= 1.0:
+            raise ValueError("Relation confidence threshold must be between 0.0 and 1.0")
+        
+        # Validate backend choice
+        valid_backends = ["networkx", "neo4j", "rdf"]
+        if self.config.kg_backend not in valid_backends:
+            raise ValueError(f"Invalid KG backend: {self.config.kg_backend}. Must be one of {valid_backends}")
+        
+        # Validate output format
+        valid_formats = ["json", "gexf", "rdf"]
+        if self.config.kg_output_format not in valid_formats:
+            raise ValueError(f"Invalid output format: {self.config.kg_output_format}. Must be one of {valid_formats}")
+        
+        logger.info("Configuration validation passed")
     
     def _init_components(self):
         """Initialize pipeline components"""
@@ -218,6 +267,17 @@ class AIFSKGPipeline:
             
             logger.info("Pipeline execution completed successfully")
             return self.results
+            
+        except Exception as e:
+            logger.error(f"Pipeline execution failed: {str(e)}")
+            # Save partial results if available
+            if self.results.get("data") or self.results.get("entities") or self.results.get("relations"):
+                logger.info("Saving partial results due to failure")
+                try:
+                    self._generate_outputs()
+                except Exception as save_error:
+                    logger.error(f"Failed to save partial results: {str(save_error)}")
+            raise
             
         except Exception as e:
             logger.error(f"Pipeline execution failed: {str(e)}")
