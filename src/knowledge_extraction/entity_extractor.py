@@ -3,8 +3,6 @@ Entity extraction for food safety knowledge graph construction
 """
 import re
 from typing import List, Dict, Any, Optional, Set, Tuple
-import spacy
-from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -14,6 +12,23 @@ from utils.helpers import normalize_entity
 from data_processing.text_cleaner import TextCleaner
 
 logger = get_logger(__name__)
+
+# Optional imports
+try:
+    import spacy
+    HAS_SPACY = True
+except ImportError:
+    spacy = None
+    HAS_SPACY = False
+
+try:
+    from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline
+    HAS_TRANSFORMERS = True
+except ImportError:
+    AutoTokenizer = None
+    AutoModelForTokenClassification = None
+    pipeline = None
+    HAS_TRANSFORMERS = False
 
 class EntityExtractor:
     """
@@ -41,8 +56,13 @@ class EntityExtractor:
         """Load the NER model"""
         try:
             if self.model_type == "spacy":
+                if not HAS_SPACY:
+                    logger.warning("spaCy not available. Using pattern-based extraction only.")
+                    self.model_type = "pattern"
+                    self.nlp = None
+                    return
+                    
                 try:
-                    import spacy
                     self.nlp = spacy.load("en_core_web_sm")
                     # Add custom entity types to spacy
                     if "food_safety" not in self.nlp.pipe_names:
@@ -53,6 +73,12 @@ class EntityExtractor:
                     self.nlp = None
             
             elif self.model_type == "biobert":
+                if not HAS_TRANSFORMERS:
+                    logger.warning("Transformers not available. Using pattern-based extraction only.")
+                    self.model_type = "pattern"
+                    self.nlp = None
+                    return
+                    
                 self.tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
                 self.model = AutoModelForTokenClassification.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
                 self.ner_pipeline = pipeline(
@@ -84,21 +110,36 @@ class EntityExtractor:
                 r'\b(?:acidic|alkaline|neutral|basic)\s*pH\b'
             ],
             "microorganism": [
-                r'\b[A-Z][a-z]+\s+[a-z]+\b',  # Scientific names
+                # Specific bacteria names
                 r'\bE\.?\s*coli\b',
-                r'\bSalmonella\b',
-                r'\bListeria\b',
-                r'\bStaphylococcus\b',
-                r'\bClostridium\b',
-                r'\bCampylobacter\b'
+                r'\bSalmonella\w*\b',
+                r'\bListeria\w*\b',
+                r'\bStaphylococcus\w*\b',
+                r'\bClostridium\w*\b',
+                r'\bCampylobacter\w*\b',
+                r'\bShigella\w*\b',
+                r'\bVibrio\w*\b',
+                r'\bBacillus\w*\b',
+                # Scientific names (genus species) - more specific pattern
+                r'\b(?:Escherichia|Salmonella|Listeria|Staphylococcus|Clostridium|Campylobacter|Shigella|Vibrio|Bacillus)\s+[a-z]+\b',
+                # General bacterial terms
+                r'\bbacteri[ao]\b',
+                r'\bpathogen[s]?\b',
+                r'\bmicroorganism[s]?\b'
+            ],
+            "food_product": [
+                r'\b(?:chicken|beef|pork|fish|seafood|poultry|meat|dairy|milk|cheese|eggs?|vegetables?|fruits?)\b',
+                r'\b(?:ground\s+beef|deli\s+meat|soft\s+cheese|unpasteurized\s+milk)\b'
             ],
             "chemical_compound": [
-                r'\b[A-Z][a-z]*(?:-[A-Z]?[a-z]*)+\b',  # Hyphenated compounds
-                r'\b\w+(?:\s+\w+)*\s+(?:acid|salt|compound|chemical)\b'
+                # Be more specific for chemical compounds
+                r'\b[A-Z][a-z]*(?:-[A-Z]?[a-z]*){2,}\b',  # Hyphenated compounds with at least 2 hyphens
+                r'\b(?:sodium|potassium|calcium|chloride|nitrate|sulfate|phosphate)\s+\w+\b',
+                r'\b\w+\s+(?:acid|salt|compound|chemical|solution)\b'
             ],
             "measurement": [
                 r'\b\d+(?:\.\d+)?\s*(?:mg|g|kg|ml|l|ppm|ppb|%)\b',
-                r'\b\d+(?:\.\d+)?\s*(?:milligrams?|grams?|kilograms?|milliliters?|liters?)\b'
+                r'\b\d+(?:\.\d+)?\s*(?:milligrams?|grams?|kilograms?|milliliters?|liters?|percent)\b'
             ],
             "allergen": [
                 r'\b(?:peanuts?|tree\s+nuts?|milk|eggs?|fish|shellfish|soy|wheat|sesame)\b',
@@ -107,6 +148,10 @@ class EntityExtractor:
             "additive": [
                 r'\bE\d{3,4}\b',  # E-numbers
                 r'\b(?:preservative|antioxidant|emulsifier|stabilizer|colorant|flavoring)\b'
+            ],
+            "safety_concern": [
+                r'\b(?:contamination|outbreak|recall|warning|alert|illness|poisoning)\b',
+                r'\b(?:unsafe|hazardous|dangerous|risky|toxic|spoiled|rotten|expired)\b'
             ]
         }
     

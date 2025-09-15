@@ -15,7 +15,25 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from utils.logger import setup_logger, get_logger
 from utils.helpers import load_config, save_config
 from data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
-from data_processing import LLMProcessor, VLMProcessor, TextCleaner
+from data_processing import TextCleaner
+
+logger = get_logger(__name__)
+
+# Optional imports for LLM and VLM processing
+try:
+    from data_processing import LLMProcessor
+    HAS_LLM = True
+except ImportError as e:
+    HAS_LLM = False
+    logger.warning(f"LLM processor not available: {e}")
+
+try:
+    from data_processing import VLMProcessor
+    HAS_VLM = True
+except ImportError as e:
+    HAS_VLM = False
+    logger.warning(f"VLM processor not available: {e}")
+
 from knowledge_extraction import EntityExtractor, RelationExtractor
 from knowledge_graph import KnowledgeGraphBuilder
 
@@ -60,6 +78,25 @@ class PipelineConfig:
     # Processing configuration
     max_workers: int = 4
     batch_size: int = 10
+    
+    def __post_init__(self):
+        """Validate configuration after initialization"""
+        # Check confidence thresholds are valid
+        if not 0.0 <= self.entity_confidence_threshold <= 1.0:
+            raise ValueError("Entity confidence threshold must be between 0.0 and 1.0")
+        
+        if not 0.0 <= self.relation_confidence_threshold <= 1.0:
+            raise ValueError("Relation confidence threshold must be between 0.0 and 1.0")
+        
+        # Validate backend choice
+        valid_backends = ["networkx", "neo4j", "rdf"]
+        if self.kg_backend not in valid_backends:
+            raise ValueError(f"Invalid KG backend: {self.kg_backend}. Must be one of {valid_backends}")
+        
+        # Validate output format
+        valid_formats = ["json", "gexf", "rdf"]
+        if self.kg_output_format not in valid_formats:
+            raise ValueError(f"Invalid output format: {self.kg_output_format}. Must be one of {valid_formats}")
 
 class AIFSKGPipeline:
     """
@@ -85,6 +122,9 @@ class AIFSKGPipeline:
         else:
             self.config = config
         
+        # Validate configuration
+        self._validate_config()
+        
         # Initialize components
         self._init_components()
         
@@ -107,6 +147,33 @@ class AIFSKGPipeline:
         
         logger.info("AI-FS-KG-Gen pipeline initialized")
     
+    def _validate_config(self):
+        """Validate pipeline configuration"""
+        # Check input sources exist
+        for source in self.config.input_sources:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ValueError(f"Input source does not exist: {source}")
+        
+        # Check confidence thresholds are valid
+        if not 0.0 <= self.config.entity_confidence_threshold <= 1.0:
+            raise ValueError("Entity confidence threshold must be between 0.0 and 1.0")
+        
+        if not 0.0 <= self.config.relation_confidence_threshold <= 1.0:
+            raise ValueError("Relation confidence threshold must be between 0.0 and 1.0")
+        
+        # Validate backend choice
+        valid_backends = ["networkx", "neo4j", "rdf"]
+        if self.config.kg_backend not in valid_backends:
+            raise ValueError(f"Invalid KG backend: {self.config.kg_backend}. Must be one of {valid_backends}")
+        
+        # Validate output format
+        valid_formats = ["json", "gexf", "rdf"]
+        if self.config.kg_output_format not in valid_formats:
+            raise ValueError(f"Invalid output format: {self.config.kg_output_format}. Must be one of {valid_formats}")
+        
+        logger.info("Configuration validation passed")
+    
     def _init_components(self):
         """Initialize pipeline components"""
         # Data loaders
@@ -121,7 +188,7 @@ class AIFSKGPipeline:
         self.llm_processor = None
         self.vlm_processor = None
         
-        if self.config.use_llm:
+        if self.config.use_llm and HAS_LLM:
             try:
                 self.llm_processor = LLMProcessor(
                     model_type=self.config.llm_model,
@@ -130,13 +197,19 @@ class AIFSKGPipeline:
             except Exception as e:
                 logger.warning(f"Failed to initialize LLM processor: {e}")
                 self.llm_processor = None
+        elif self.config.use_llm and not HAS_LLM:
+            logger.warning("LLM processing requested but LLM dependencies not available")
         
-        if self.config.use_vlm:
+        if self.config.use_vlm and HAS_VLM:
             try:
-                self.vlm_processor = VLMProcessor(model_type=self.config.vlm_model)
+                self.vlm_processor = VLMProcessor(
+                    model_type=self.config.vlm_model
+                )
             except Exception as e:
                 logger.warning(f"Failed to initialize VLM processor: {e}")
                 self.vlm_processor = None
+        elif self.config.use_vlm and not HAS_VLM:
+            logger.warning("VLM processing requested but VLM dependencies not available")
         
         # Knowledge extraction
         self.entity_extractor = None
@@ -194,6 +267,17 @@ class AIFSKGPipeline:
             
             logger.info("Pipeline execution completed successfully")
             return self.results
+            
+        except Exception as e:
+            logger.error(f"Pipeline execution failed: {str(e)}")
+            # Save partial results if available
+            if self.results.get("data") or self.results.get("entities") or self.results.get("relations"):
+                logger.info("Saving partial results due to failure")
+                try:
+                    self._generate_outputs()
+                except Exception as save_error:
+                    logger.error(f"Failed to save partial results: {str(save_error)}")
+            raise
             
         except Exception as e:
             logger.error(f"Pipeline execution failed: {str(e)}")

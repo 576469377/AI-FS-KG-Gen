@@ -4,8 +4,6 @@ Relation extraction for food safety knowledge graph construction
 import re
 from typing import List, Dict, Any, Optional, Tuple, Set
 from itertools import combinations
-import spacy
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -15,6 +13,23 @@ from utils.helpers import normalize_entity
 from data_processing.text_cleaner import TextCleaner
 
 logger = get_logger(__name__)
+
+# Optional imports
+try:
+    import spacy
+    HAS_SPACY = True
+except ImportError:
+    spacy = None
+    HAS_SPACY = False
+
+try:
+    from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
+    HAS_TRANSFORMERS = True
+except ImportError:
+    AutoTokenizer = None
+    AutoModelForSequenceClassification = None
+    pipeline = None
+    HAS_TRANSFORMERS = False
 
 class RelationExtractor:
     """
@@ -43,45 +58,37 @@ class RelationExtractor:
         """Setup regex patterns for relation extraction"""
         self.relation_patterns = {
             "contains": [
-                r'(\w+(?:\s+\w+)*)\s+(?:contains?|has|includes?|with)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:rich\s+in|source\s+of|loaded\s+with)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:made\s+)?(?:from|of|with)\s+(\w+(?:\s+\w+)*)'
+                r'(\w+(?:\s+\w+){0,3})\s+(?:contains?|has|includes?)\s+(\w+(?:\s+\w+){0,3})',
+                r'(\w+(?:\s+\w+){0,3})\s+(?:rich\s+in|source\s+of|with)\s+(\w+(?:\s+\w+){0,3})'
             ],
             "causes": [
-                r'(\w+(?:\s+\w+)*)\s+(?:causes?|leads?\s+to|results?\s+in|triggers?)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:responsible\s+for|linked\s+to)\s+(\w+(?:\s+\w+)*)'
+                r'(\w+(?:\s+\w+){0,3})\s+(?:causes?|leads?\s+to|results?\s+in|triggers?)\s+(\w+(?:\s+\w+){0,3})',
+                r'(\w+(?:\s+\w+){0,3})\s+(?:can\s+cause|may\s+cause)\s+(\w+(?:\s+\w+){0,3})',
+                r'(\w+(?:\s+\w+){0,3})\s+(?:responsible\s+for|linked\s+to)\s+(\w+(?:\s+\w+){0,3})'
             ],
             "prevents": [
-                r'(\w+(?:\s+\w+)*)\s+(?:prevents?|stops?|blocks?|inhibits?)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:protects?\s+against|guards?\s+against)\s+(\w+(?:\s+\w+)*)'
-            ],
-            "regulates": [
-                r'(\w+(?:\s+\w+)*)\s+(?:regulates?|controls?|governs?|manages?)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:regulated\s+by|controlled\s+by)\s+(\w+(?:\s+\w+)*)'
-            ],
-            "tests_for": [
-                r'(?:test\w*|check\w*|screen\w*|analyze\w*)\s+(\w+(?:\s+\w+)*)\s+(?:for|to\s+detect)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:tested|checked|screened|analyzed)\s+(?:for|to\s+detect)\s+(\w+(?:\s+\w+)*)'
-            ],
-            "associated_with": [
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:associated\s+with|related\s+to|linked\s+to)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:and|&)\s+(\w+(?:\s+\w+)*)\s+(?:are\s+)?(?:associated|related|linked)'
+                r'(\w+(?:\s+\w+){0,3})\s+(?:prevents?|stops?|blocks?|inhibits?)\s+(\w+(?:\s+\w+){0,3})',
+                r'(\w+(?:\s+\w+){0,3})\s+(?:can\s+prevent|to\s+prevent)\s+(\w+(?:\s+\w+){0,3})'
             ],
             "stored_at": [
-                r'(?:store|keep|maintain)\s+(\w+(?:\s+\w+)*)\s+(?:at|in|under)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:should\s+be\s+)?(?:stored|kept|maintained)\s+(?:at|in|under)\s+(\w+(?:\s+\w+)*)'
+                r'(?:store|keep|maintain)\s+(\w+(?:\s+\w+){0,2})\s+(?:at|in|under)\s+(\d+°?[CF]?|\w+(?:\s+\w+){0,2})',
+                r'(\w+(?:\s+\w+){0,2})\s+(?:should\s+be\s+)?(?:stored|kept|maintained)\s+(?:at|below)\s+(\d+°?[CF]?|\w+(?:\s+\w+){0,2})'
             ],
-            "processed_by": [
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:processed|treated|prepared)\s+(?:by|using|with)\s+(\w+(?:\s+\w+)*)',
-                r'(?:process|treat|prepare)\s+(\w+(?:\s+\w+)*)\s+(?:by|using|with)\s+(\w+(?:\s+\w+)*)'
+            "contaminated_with": [
+                r'(\w+(?:\s+\w+){0,2})\s+(?:contaminated\s+with|infected\s+with|harbors?)\s+(\w+(?:\s+\w+){0,2})',
+                r'(\w+(?:\s+\w+){0,2})\s+(?:may\s+contain|can\s+harbor)\s+(\w+(?:\s+\w+){0,2})'
             ],
-            "exceeds": [
-                r'(\w+(?:\s+\w+)*)\s+(?:exceeds?|surpasses?|is\s+above)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:levels?\s+)?(?:exceed|surpass|are\s+above)\s+(\w+(?:\s+\w+)*)'
+            "tested_for": [
+                r'(?:test|check|screen|analyze)\s+(\w+(?:\s+\w+){0,2})\s+(?:for)\s+(\w+(?:\s+\w+){0,2})',
+                r'(\w+(?:\s+\w+){0,2})\s+(?:tested|screened)\s+(?:for)\s+(\w+(?:\s+\w+){0,2})'
             ],
-            "complies_with": [
-                r'(\w+(?:\s+\w+)*)\s+(?:complies?\s+with|meets?|follows?|adheres?\s+to)\s+(\w+(?:\s+\w+)*)',
-                r'(\w+(?:\s+\w+)*)\s+(?:is\s+)?(?:compliant\s+with|in\s+accordance\s+with)\s+(\w+(?:\s+\w+)*)'
+            "requires": [
+                r'(\w+(?:\s+\w+){0,2})\s+(?:requires?|needs?|demands?)\s+(\w+(?:\s+\w+){0,2})',
+                r'(\w+(?:\s+\w+){0,2})\s+(?:must\s+be|should\s+be)\s+(\w+(?:\s+\w+){0,2})'
+            ],
+            "regulated_by": [
+                r'(\w+(?:\s+\w+){0,2})\s+(?:regulated\s+by|governed\s+by|controlled\s+by)\s+(\w+(?:\s+\w+){0,2})',
+                r'(\w+(?:\s+\w+){0,2})\s+(?:follows?|complies?\s+with)\s+(\w+(?:\s+\w+){0,2})'
             ]
         }
         
@@ -97,16 +104,31 @@ class RelationExtractor:
         """Load the relation extraction model"""
         try:
             if self.model_type == "spacy":
-                self.nlp = spacy.load("en_core_web_sm")
+                if not HAS_SPACY:
+                    logger.warning("spaCy not available. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    return
+                    
+                try:
+                    self.nlp = spacy.load("en_core_web_sm")
+                except OSError:
+                    logger.warning("spaCy model 'en_core_web_sm' not found. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    
             elif self.model_type == "transformer":
+                if not HAS_TRANSFORMERS:
+                    logger.warning("Transformers not available. Falling back to pattern-based extraction.")
+                    self.model_type = "pattern"
+                    return
+                    
                 # Load a relation extraction model (placeholder - would need specific model)
                 model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Fallback to similarity
                 self.tokenizer = AutoTokenizer.from_pretrained(model_name)
                 # Note: For actual relation extraction, you'd use a model trained on relation data
                 self.similarity_pipeline = pipeline("feature-extraction", model=model_name)
         except Exception as e:
-            logger.error(f"Failed to load relation extraction model: {str(e)}")
-            raise
+            logger.warning(f"Failed to load relation extraction model: {str(e)}. Falling back to pattern-based extraction.")
+            self.model_type = "pattern"
     
     def extract_relations(self, text: str, entities: Optional[Dict[str, List[Dict]]] = None, 
                          confidence_threshold: float = 0.6) -> List[Dict[str, Any]]:

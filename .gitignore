@@ -54,6 +54,10 @@ data/
 *.json
 *.xlsx
 
+# Test files
+test_*.py
+*_test.py
+
 # OS
 .DS_Store
 Thumbs.db
