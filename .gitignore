@@ -42,12 +42,21 @@ output/
 results/
 temp/
 tmp/
+examples/output/
 
-# Model files
+# Model files and caches
 models/
 *.bin
 *.pt
 *.pth
+model_cache/
+.cache/
+transformers_cache/
+
+# AI/ML related
+wandb/
+tensorboard_logs/
+checkpoints/
 
 # Data files
 data/
@@ -77,3 +86,9 @@ docs/_build/
 # Local configuration
 .env.local
 config.local.yaml
+
+# API keys and secrets
+.env.prod
+.env.dev
+*.key
+*.pem

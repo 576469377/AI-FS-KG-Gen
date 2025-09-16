@@ -205,6 +205,26 @@ config = PipelineConfig(
 )
 ```
 
+### Supported AI Models
+
+#### Large Language Models (LLMs)
+- **OpenAI Models**: GPT-3.5-turbo, GPT-4, GPT-4-turbo
+- **Hugging Face Models**: LLaMA 2, Mistral, Code Llama, Flan-T5
+- **Local Models**: Any Hugging Face compatible model
+
+#### Vision-Language Models (VLMs)
+- **BLIP Models**: Base and Large variants for image captioning
+- **CLIP Models**: For zero-shot image classification
+- **LLaVA**: For advanced visual reasoning
+
+#### Model Selection Guide
+- **Development**: GPT-3.5-turbo + BLIP-base (fast, cost-effective)
+- **Production**: GPT-4 + BLIP-large (high accuracy)
+- **Privacy-First**: Local Hugging Face models (no external API calls)
+- **Budget-Conscious**: Local smaller models or limited API usage
+
+> 📖 **For detailed model setup and configuration, see our [Model Support Guide](docs/model_support.md) and [LLM Integration Guide](docs/llm_integration.md)**
+
 ### Environment Variables
 ```bash
 # For LLM functionality
@@ -214,13 +234,23 @@ export OPENAI_API_KEY="your-openai-api-key"
 export NEO4J_URI="bolt://localhost:7687"
 export NEO4J_USER="neo4j"
 export NEO4J_PASSWORD="password"
+
+# For local model caching
+export TRANSFORMERS_CACHE="./model_cache"
 ```
 
 ## 📚 Documentation
 
-- [📖 Architecture Overview](docs/architecture.md)
-- [📘 Usage Guide](docs/usage.md)
-- [🔧 API Reference](docs/api.md)
+### Core Documentation
+- [📖 Architecture Overview](docs/architecture.md) - System design and components
+- [📘 Usage Guide](docs/usage.md) - How to use the pipeline
+- [🔧 API Reference](docs/api.md) - Complete API documentation
+
+### Model Integration & Support
+- [🤖 Model Support Guide](docs/model_support.md) - Complete overview of supported AI models
+- [⚡ LLM Integration Guide](docs/llm_integration.md) - Step-by-step LLM setup and configuration
+- [⚙️ Configuration Examples](docs/configuration_examples.md) - Real-world deployment scenarios
+- [🔧 Troubleshooting Guide](docs/troubleshooting.md) - Common issues and solutions
 
 ## 🧪 Testing
 
