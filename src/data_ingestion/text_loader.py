@@ -6,7 +6,14 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Generator
 import requests
 from bs4 import BeautifulSoup
-import pdfplumber
+
+# Optional imports
+try:
+    import pdfplumber
+    HAS_PDF = True
+except ImportError:
+    HAS_PDF = False
+
 from utils.logger import get_logger
 from utils.helpers import validate_file_path, clean_text, generate_hash
 
@@ -160,6 +167,10 @@ class TextLoader:
     
     def _load_pdf(self, file_path: Path) -> str:
         """Load content from a PDF file"""
+        if not HAS_PDF:
+            logger.warning(f"pdfplumber not available, cannot load PDF: {file_path}")
+            raise ImportError("pdfplumber is required for PDF processing. Install with: pip install pdfplumber")
+        
         content = []
         
         with pdfplumber.open(file_path) as pdf:

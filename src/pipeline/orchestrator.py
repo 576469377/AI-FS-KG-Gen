@@ -9,33 +9,30 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, asdict
 from datetime import datetime
 
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from utils.logger import setup_logger, get_logger
-from utils.helpers import load_config, save_config
-from data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
-from data_processing import TextCleaner
+from ..utils.logger import setup_logger, get_logger
+from ..utils.helpers import load_config, save_config
+from ..data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
+from ..data_processing import TextCleaner
 
 logger = get_logger(__name__)
 
 # Optional imports for LLM and VLM processing
 try:
-    from data_processing import LLMProcessor
+    from ..data_processing import LLMProcessor
     HAS_LLM = True
 except ImportError as e:
     HAS_LLM = False
     logger.warning(f"LLM processor not available: {e}")
 
 try:
-    from data_processing import VLMProcessor
+    from ..data_processing import VLMProcessor
     HAS_VLM = True
 except ImportError as e:
     HAS_VLM = False
     logger.warning(f"VLM processor not available: {e}")
 
-from knowledge_extraction import EntityExtractor, RelationExtractor
-from knowledge_graph import KnowledgeGraphBuilder
+from ..knowledge_extraction import EntityExtractor, RelationExtractor
+from ..knowledge_graph import KnowledgeGraphBuilder
 
 # Set default paths
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -45,8 +42,6 @@ LOGS_DIR = PROJECT_ROOT / "logs"
 # Create directories
 OUTPUT_DIR.mkdir(exist_ok=True)
 LOGS_DIR.mkdir(exist_ok=True)
-
-logger = get_logger(__name__)
 
 @dataclass
 class PipelineConfig:
