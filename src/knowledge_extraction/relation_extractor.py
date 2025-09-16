@@ -58,37 +58,38 @@ class RelationExtractor:
         """Setup regex patterns for relation extraction"""
         self.relation_patterns = {
             "contains": [
-                r'(\w+(?:\s+\w+){0,3})\s+(?:contains?|has|includes?)\s+(\w+(?:\s+\w+){0,3})',
-                r'(\w+(?:\s+\w+){0,3})\s+(?:rich\s+in|source\s+of|with)\s+(\w+(?:\s+\w+){0,3})'
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:contains?|has|includes?)\s+(\w+(?:\s+\w+){0,3})\b',
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:rich\s+in|source\s+of|with)\s+(\w+(?:\s+\w+){0,3})\b'
             ],
             "causes": [
-                r'(\w+(?:\s+\w+){0,3})\s+(?:causes?|leads?\s+to|results?\s+in|triggers?)\s+(\w+(?:\s+\w+){0,3})',
-                r'(\w+(?:\s+\w+){0,3})\s+(?:can\s+cause|may\s+cause)\s+(\w+(?:\s+\w+){0,3})',
-                r'(\w+(?:\s+\w+){0,3})\s+(?:responsible\s+for|linked\s+to)\s+(\w+(?:\s+\w+){0,3})'
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:causes?|leads?\s+to|results?\s+in|triggers?)\s+(\w+(?:\s+\w+){0,3})\b',
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:can\s+cause|may\s+cause)\s+(\w+(?:\s+\w+){0,3})\b',
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:responsible\s+for|linked\s+to)\s+(\w+(?:\s+\w+){0,3})\b'
             ],
             "prevents": [
-                r'(\w+(?:\s+\w+){0,3})\s+(?:prevents?|stops?|blocks?|inhibits?)\s+(\w+(?:\s+\w+){0,3})',
-                r'(\w+(?:\s+\w+){0,3})\s+(?:can\s+prevent|to\s+prevent)\s+(\w+(?:\s+\w+){0,3})'
+                # More specific patterns to avoid capturing fragments
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:prevents?|stops?|blocks?|inhibits?)\s+(\w+(?:\s+\w+){0,3})\b',
+                r'\b(\w+(?:\s+\w+){0,3})\s+(?:to\s+prevent)\s+(\w+(?:\s+\w+){0,3})\b'
             ],
             "stored_at": [
-                r'(?:store|keep|maintain)\s+(\w+(?:\s+\w+){0,2})\s+(?:at|in|under)\s+(\d+°?[CF]?|\w+(?:\s+\w+){0,2})',
-                r'(\w+(?:\s+\w+){0,2})\s+(?:should\s+be\s+)?(?:stored|kept|maintained)\s+(?:at|below)\s+(\d+°?[CF]?|\w+(?:\s+\w+){0,2})'
+                r'\b(?:store|keep|maintain)\s+(\w+(?:\s+\w+){0,2})\s+(?:at|in|under)\s+(\d+\s*°?[CF]?|\w+(?:\s+\w+){0,2})\b',
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:should\s+be\s+)?(?:stored|kept|maintained)\s+(?:at|below)\s+(\d+\s*°?[CF]?|\w+(?:\s+\w+){0,2})\b'
             ],
             "contaminated_with": [
-                r'(\w+(?:\s+\w+){0,2})\s+(?:contaminated\s+with|infected\s+with|harbors?)\s+(\w+(?:\s+\w+){0,2})',
-                r'(\w+(?:\s+\w+){0,2})\s+(?:may\s+contain|can\s+harbor)\s+(\w+(?:\s+\w+){0,2})'
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:contaminated\s+with|infected\s+with|harbors?)\s+(\w+(?:\s+\w+){0,2})\b',
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:may\s+contain|can\s+harbor)\s+(\w+(?:\s+\w+){0,2})\b'
             ],
             "tested_for": [
-                r'(?:test|check|screen|analyze)\s+(\w+(?:\s+\w+){0,2})\s+(?:for)\s+(\w+(?:\s+\w+){0,2})',
-                r'(\w+(?:\s+\w+){0,2})\s+(?:tested|screened)\s+(?:for)\s+(\w+(?:\s+\w+){0,2})'
+                r'\b(?:test|check|screen|analyze)\s+(\w+(?:\s+\w+){0,2})\s+(?:for)\s+(\w+(?:\s+\w+){0,2})\b',
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:tested|screened)\s+(?:for)\s+(\w+(?:\s+\w+){0,2})\b'
             ],
             "requires": [
-                r'(\w+(?:\s+\w+){0,2})\s+(?:requires?|needs?|demands?)\s+(\w+(?:\s+\w+){0,2})',
-                r'(\w+(?:\s+\w+){0,2})\s+(?:must\s+be|should\s+be)\s+(\w+(?:\s+\w+){0,2})'
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:requires?|needs?|demands?)\s+(\w+(?:\s+\w+){0,2})\b',
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:must\s+be|should\s+be)\s+(\w+(?:\s+\w+){0,2})\b'
             ],
             "regulated_by": [
-                r'(\w+(?:\s+\w+){0,2})\s+(?:regulated\s+by|governed\s+by|controlled\s+by)\s+(\w+(?:\s+\w+){0,2})',
-                r'(\w+(?:\s+\w+){0,2})\s+(?:follows?|complies?\s+with)\s+(\w+(?:\s+\w+){0,2})'
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:regulated\s+by|governed\s+by|controlled\s+by)\s+(\w+(?:\s+\w+){0,2})\b',
+                r'\b(\w+(?:\s+\w+){0,2})\s+(?:follows?|complies?\s+with)\s+(\w+(?:\s+\w+){0,2})\b'
             ]
         }
         
@@ -175,8 +176,14 @@ class RelationExtractor:
                         subject = groups[0].strip()
                         obj = groups[1].strip()
                         
-                        # Skip if subject or object are too short or generic
+                        # Pre-filter: Skip if subject or object are too short or generic
                         if len(subject) < 2 or len(obj) < 2:
+                            continue
+                        
+                        # Skip if subject or object are only common words
+                        if subject.lower() in {"to", "and", "or", "the", "a", "an"}:
+                            continue
+                        if obj.lower() in {"to", "and", "or", "the", "a", "an"}:
                             continue
                         
                         relations.append({
@@ -442,6 +449,30 @@ class RelationExtractor:
         if relation.get("confidence", 0) < 0.3:
             return False
         
+        # Skip relations with incomplete or fragmented text (more specific patterns)
+        if any(fragment in subject.lower() for fragment in ["°c to", "°f to"]):
+            return False
+        
+        if any(fragment in obj.lower() for fragment in ["°c to", "°f to"]):
+            return False
+        
+        # Skip if subject or object contains mostly common words/articles
+        common_words = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by"}
+        subject_words = set(subject.lower().split())
+        obj_words = set(obj.lower().split())
+        
+        # If ALL words are common words, skip
+        if subject_words and subject_words.issubset(common_words):
+            return False
+        if obj_words and obj_words.issubset(common_words):
+            return False
+        
+        # Skip relations where subject or object are incomplete phrases
+        if subject.endswith(" to") or subject.endswith(" and") or subject.endswith(" or"):
+            return False
+        if obj.startswith("to ") or obj.startswith("and ") or obj.startswith("or "):
+            return False
+            
         return True
     
     def extract_food_safety_relations(self, text: str, entities: Optional[Dict] = None) -> List[Dict[str, Any]]:
