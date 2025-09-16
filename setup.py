@@ -40,7 +40,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "ai-fs-kg-gen=pipeline.orchestrator:main",
+            "ai-fs-kg-gen=ai_fs_kg_gen_cli:main",
         ],
     },
 )
