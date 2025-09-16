@@ -18,7 +18,9 @@ src/knowledge_extraction/__init__.py
 src/knowledge_extraction/entity_extractor.py
 src/knowledge_extraction/relation_extractor.py
 src/knowledge_graph/__init__.py
+src/knowledge_graph/kg_builder.py
 src/pipeline/__init__.py
+src/pipeline/orchestrator.py
 src/utils/__init__.py
 src/utils/helpers.py
 src/utils/logger.py
