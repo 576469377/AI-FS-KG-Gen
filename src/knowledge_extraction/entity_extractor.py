@@ -67,6 +67,8 @@ class EntityExtractor:
                     # Add custom entity types to spacy
                     if "food_safety" not in self.nlp.pipe_names:
                         ruler = self.nlp.add_pipe("entity_ruler", name="food_safety")
+                        # Add patterns after creating the ruler (this will be called in _setup_patterns)
+                        self._ruler = ruler
                 except OSError:
                     logger.warning("spaCy model 'en_core_web_sm' not found. Using pattern-based extraction only.")
                     self.model_type = "pattern"
@@ -103,7 +105,7 @@ class EntityExtractor:
         self.patterns = {
             "temperature": [
                 r'\b\d+\s*(?:°[CF]|degrees?\s+(?:celsius|fahrenheit|centigrade))\b',
-                r'\b(?:freezing|frozen|refrigerat\w+|room\s+temperature|ambient)\b'
+                r'\b(?:freezing|frozen|room\s+temperature|ambient\s+temperature)\b'
             ],
             "ph_level": [
                 r'\bpH\s*\d+(?:\.\d+)?\b',
@@ -149,11 +151,32 @@ class EntityExtractor:
                 r'\bE\d{3,4}\b',  # E-numbers
                 r'\b(?:preservative|antioxidant|emulsifier|stabilizer|colorant|flavoring)\b'
             ],
+            "storage_condition": [
+                r'\b(?:refrigerat\w+|stor\w+|kept|maintain\w*)\b',
+                r'\b(?:cold\s+storage|dry\s+storage|cool\s+place)\b'
+            ],
             "safety_concern": [
                 r'\b(?:contamination|outbreak|recall|warning|alert|illness|poisoning)\b',
                 r'\b(?:unsafe|hazardous|dangerous|risky|toxic|spoiled|rotten|expired)\b'
             ]
         }
+        
+        # Add patterns to spaCy entity ruler if available
+        if hasattr(self, '_ruler') and self._ruler is not None:
+            spacy_patterns = []
+            for entity_type, regex_patterns in self.patterns.items():
+                for pattern in regex_patterns:
+                    # Convert entity type to uppercase for consistency with spaCy
+                    label = entity_type.upper()
+                    # Add regex patterns to spaCy (note: spaCy requires pattern dict format)
+                    spacy_patterns.append({
+                        "label": label,
+                        "pattern": [{"TEXT": {"REGEX": pattern}}]
+                    })
+            
+            if spacy_patterns:
+                self._ruler.add_patterns(spacy_patterns)
+                logger.info(f"Added {len(spacy_patterns)} patterns to spaCy entity ruler")
     
     def extract_entities(self, text: str, confidence_threshold: float = 0.7) -> Dict[str, List[Dict[str, Any]]]:
         """
@@ -262,7 +285,25 @@ class EntityExtractor:
     
     def _map_spacy_label(self, label: str) -> Optional[str]:
         """Map spaCy labels to food safety entity types"""
-        mapping = {
+        # First check our custom entity labels (uppercase from patterns)
+        custom_mapping = {
+            "TEMPERATURE": "temperature",
+            "PH_LEVEL": "ph_level", 
+            "MICROORGANISM": "microorganism",
+            "FOOD_PRODUCT": "food_product",
+            "CHEMICAL_COMPOUND": "chemical_compound",
+            "MEASUREMENT": "measurement",
+            "ALLERGEN": "allergen",
+            "ADDITIVE": "additive",
+            "STORAGE_CONDITION": "storage_condition",
+            "SAFETY_CONCERN": "safety_concern"
+        }
+        
+        if label in custom_mapping:
+            return custom_mapping[label]
+        
+        # Standard spaCy labels
+        standard_mapping = {
             "PERSON": None,  # Usually not relevant for food safety
             "ORG": "organization",
             "GPE": "location",
@@ -276,7 +317,7 @@ class EntityExtractor:
             "DATE": "date",
             "TIME": "time"
         }
-        return mapping.get(label)
+        return standard_mapping.get(label)
     
     def _map_biobert_label(self, label: str) -> Optional[str]:
         """Map BioBERT labels to food safety entity types"""
