@@ -149,8 +149,12 @@ class AIFSKGPipeline:
     
     def _validate_config(self):
         """Validate pipeline configuration"""
-        # Check input sources exist
+        # Check input sources exist (skip URLs)
         for source in self.config.input_sources:
+            # Skip URL validation - they will be validated during ingestion
+            if source.startswith(("http://", "https://")):
+                continue
+            
             source_path = Path(source)
             if not source_path.exists():
                 raise ValueError(f"Input source does not exist: {source}")
@@ -270,6 +274,7 @@ class AIFSKGPipeline:
             
         except Exception as e:
             logger.error(f"Pipeline execution failed: {str(e)}")
+            self.results["error"] = str(e)
             # Save partial results if available
             if self.results.get("data") or self.results.get("entities") or self.results.get("relations"):
                 logger.info("Saving partial results due to failure")
@@ -277,11 +282,6 @@ class AIFSKGPipeline:
                     self._generate_outputs()
                 except Exception as save_error:
                     logger.error(f"Failed to save partial results: {str(save_error)}")
-            raise
-            
-        except Exception as e:
-            logger.error(f"Pipeline execution failed: {str(e)}")
-            self.results["error"] = str(e)
             raise
     
     def _ingest_data(self):
