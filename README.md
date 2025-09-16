@@ -241,6 +241,9 @@ export TRANSFORMERS_CACHE="./model_cache"
 
 ## 📚 Documentation
 
+### Quick Start
+- [🚀 Quick Start Guide](docs/quick_start.md) - **Start here!** Choose your deployment scenario and get running in minutes
+
 ### Core Documentation
 - [📖 Architecture Overview](docs/architecture.md) - System design and components
 - [📘 Usage Guide](docs/usage.md) - How to use the pipeline
