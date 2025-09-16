@@ -472,6 +472,14 @@ class RelationExtractor:
             return False
         if obj.startswith("to ") or obj.startswith("and ") or obj.startswith("or "):
             return False
+        
+        # Skip subjects that start with coordinating conjunctions
+        if subject.lower().startswith(("and ", "or ", "but ")):
+            return False
+        
+        # Skip incomplete relations (ending with incomplete words/phrases)
+        if obj.lower().endswith((" requiring", " critical", " analysis", " severe")):
+            return False
             
         return True
     
