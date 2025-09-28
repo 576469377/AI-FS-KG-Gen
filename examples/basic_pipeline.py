@@ -173,9 +173,7 @@ def run_simple_pipeline():
     
     # Export KG
     kg_file = output_dir / f"knowledge_graph_{timestamp}.json"
-    kg_data = kg_builder.export_json()
-    with open(kg_file, 'w', encoding='utf-8') as f:
-        json.dump(kg_data, f, indent=2, ensure_ascii=False)
+    kg_builder.export_graph(str(kg_file), format="json")
     
     print(f"\nOutput files:")
     print(f"  - Entities: {entities_file}")
@@ -197,57 +195,6 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-    
-    # Create pipeline configuration
-    config = PipelineConfig(
-        input_sources=[sample_dir],
-        input_types=["text"],
-        use_llm=False,  # Disable LLM to avoid API requirements
-        use_vlm=False,  # Disable VLM to avoid model downloads
-        entity_extraction=True,
-        relation_extraction=True,
-        kg_backend="networkx",
-        kg_output_format="json",
-        max_workers=2,
-        batch_size=5
-    )
-    
-    try:
-        # Initialize and run pipeline
-        pipeline = AIFSKGPipeline(config)
-        results = pipeline.run()
-        
-        # Display results
-        print("Pipeline completed successfully!\n")
-        
-        print("=== Statistics ===")
-        stats = results['statistics']
-        print(f"Data items processed: {stats['data_items_processed']}")
-        print(f"Total entities extracted: {stats['total_entities']}")
-        print(f"Total relations extracted: {stats['total_relations']}")
-        print(f"Entity types: {', '.join(stats['entity_types'])}")
-        print(f"Relation types: {', '.join(stats['relation_types'])}")
-        
-        print(f"\n=== Knowledge Graph Statistics ===")
-        kg_stats = stats['knowledge_graph_stats']
-        print(f"Nodes: {kg_stats.get('nodes', 0)}")
-        print(f"Edges: {kg_stats.get('edges', 0)}")
-        
-        print(f"\n=== Sample Entities ===")
-        for entity_type, entities in list(results['entities'].items())[:3]:
-            print(f"{entity_type}: {[e['text'] for e in entities[:5]]}")
-        
-        print(f"\n=== Sample Relations ===")
-        for relation in results['relations'][:5]:
-            print(f"{relation['subject']} --{relation['predicate']}--> {relation['object']}")
-        
-        print(f"\nOutput files saved to: {config.output_dir}")
-        
-        return True
-        
-    except Exception as e:
-        print(f"Pipeline failed: {str(e)}")
-        return False
 
 def run_advanced_example():
     """Run advanced pipeline example with all features"""

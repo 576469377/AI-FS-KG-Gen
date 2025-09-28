@@ -110,7 +110,20 @@ flowchart TD
 
 ## 📦 Installation
 
-### Basic Installation
+### Minimal Installation (Recommended for getting started)
+```bash
+# Clone the repository
+git clone https://github.com/576469377/AI-FS-KG-Gen.git
+cd AI-FS-KG-Gen
+
+# Install minimal core dependencies
+pip install loguru beautifulsoup4 pillow networkx
+
+# Test the installation
+python test_basic.py
+```
+
+### Full Installation (For all features)
 ```bash
 # Clone the repository
 git clone https://github.com/576469377/AI-FS-KG-Gen.git
@@ -122,6 +135,9 @@ pip install -r requirements.txt
 
 ### Optional Dependencies
 ```bash
+# For advanced data processing (CSV, Excel files)
+pip install pandas numpy
+
 # For advanced LLM features (requires API keys)
 pip install openai transformers torch
 
@@ -132,6 +148,8 @@ python -m spacy download en_core_web_sm
 # For graph database support
 pip install neo4j py2neo
 ```
+
+**Note:** The project now works with minimal dependencies! You can start using it right away with just the minimal installation.
 
 ## 🏃‍♂️ Quick Start
 
