@@ -6,10 +6,17 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Generator
 from io import BytesIO
 import requests
-from PIL import Image
 import hashlib
 from utils.logger import get_logger
 from utils.helpers import validate_file_path, generate_hash
+
+# Optional PIL import
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+    Image = None
 
 logger = get_logger(__name__)
 
@@ -25,8 +32,12 @@ class ImageLoader:
         Args:
             supported_formats: List of supported image formats
         """
+        if not PIL_AVAILABLE:
+            logger.warning("PIL/Pillow not available. Image processing functionality will be limited.")
+        
         self.supported_formats = supported_formats or ['.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.webp']
         logger.info(f"ImageLoader initialized with formats: {self.supported_formats}")
+        self.pil_available = PIL_AVAILABLE
     
     def load_image(self, image_path: str) -> Dict[str, Any]:
         """
@@ -38,6 +49,10 @@ class ImageLoader:
         Returns:
             Dictionary containing image data and metadata
         """
+        if not self.pil_available:
+            logger.error("PIL/Pillow not available. Cannot process images.")
+            raise ImportError("PIL/Pillow is required for image processing. Install with: pip install pillow")
+        
         image_path = Path(image_path)
         
         if not validate_file_path(image_path, self.supported_formats):
