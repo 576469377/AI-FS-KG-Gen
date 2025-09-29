@@ -5,9 +5,16 @@ import json
 import csv
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Generator, Union
-import pandas as pd
 from utils.logger import get_logger
 from utils.helpers import validate_file_path, generate_hash
+
+# Optional pandas import
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
 
 logger = get_logger(__name__)
 
@@ -23,7 +30,11 @@ class StructuredDataLoader:
         Args:
             supported_formats: List of supported file formats
         """
+        if not PANDAS_AVAILABLE:
+            logger.warning("pandas not available. Excel file support will be limited.")
+            
         self.supported_formats = supported_formats or ['.csv', '.json', '.xlsx', '.xls', '.jsonl', '.tsv']
+        self.pandas_available = PANDAS_AVAILABLE
         logger.info(f"StructuredDataLoader initialized with formats: {self.supported_formats}")
     
     def load_csv(self, file_path: str, **kwargs) -> Dict[str, Any]:
@@ -37,6 +48,10 @@ class StructuredDataLoader:
         Returns:
             Dictionary containing data and metadata
         """
+        if not self.pandas_available:
+            logger.error("pandas not available. Cannot load CSV files efficiently.")
+            raise ImportError("pandas is required for CSV processing. Install with: pip install pandas")
+            
         file_path = Path(file_path)
         logger.info(f"Loading CSV file: {file_path}")
         
@@ -159,6 +174,10 @@ class StructuredDataLoader:
         Returns:
             Dictionary containing data and metadata
         """
+        if not self.pandas_available:
+            logger.error("pandas not available. Cannot load Excel files.")
+            raise ImportError("pandas is required for Excel processing. Install with: pip install pandas openpyxl")
+            
         file_path = Path(file_path)
         logger.info(f"Loading Excel file: {file_path}")
         
@@ -269,7 +288,7 @@ class StructuredDataLoader:
                     logger.warning(f"Skipping file {file_path} due to error: {str(e)}")
                     continue
     
-    def extract_food_safety_records(self, data: Union[pd.DataFrame, List[Dict], Dict], 
+    def extract_food_safety_records(self, data: Union[Any, List[Dict], Dict], 
                                    food_columns: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """
         Extract food safety related records from structured data
@@ -292,7 +311,7 @@ class StructuredDataLoader:
         
         records = []
         
-        if isinstance(data, pd.DataFrame):
+        if self.pandas_available and pd is not None and hasattr(pd, 'DataFrame') and isinstance(data, pd.DataFrame):
             # Find relevant columns
             relevant_cols = []
             for col in data.columns:
@@ -305,7 +324,7 @@ class StructuredDataLoader:
             for _, row in data.iterrows():
                 record = {}
                 for col in relevant_cols:
-                    if pd.notna(row[col]):
+                    if row[col] is not None and str(row[col]).strip() != '' and str(row[col]).lower() not in ['nan', 'na', 'null']:
                         record[col] = str(row[col])
                 
                 if record:

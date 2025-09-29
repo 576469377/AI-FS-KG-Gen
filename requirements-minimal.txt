@@ -1,0 +1,22 @@
+# Minimal requirements for basic AI-FS-KG-Gen functionality
+# This allows you to use the pipeline with text data and pattern-based extraction
+
+# Core dependencies
+loguru>=0.5.3
+beautifulsoup4>=4.10.0
+pillow>=8.3.0
+networkx>=2.6.0
+
+# Optional but recommended for text processing
+requests>=2.26.0
+lxml>=4.6.0
+
+# Basic dependencies that are usually available
+pathlib
+typing-extensions
+dataclasses
+
+# Configuration and utilities
+python-dotenv>=0.19.0
+pyyaml>=5.4.0
+tqdm>=4.62.0

@@ -9,30 +9,30 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, asdict
 from datetime import datetime
 
-from ..utils.logger import setup_logger, get_logger
-from ..utils.helpers import load_config, save_config
-from ..data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
-from ..data_processing import TextCleaner
+from utils.logger import setup_logger, get_logger
+from utils.helpers import load_config, save_config
+from data_ingestion import TextLoader, ImageLoader, StructuredDataLoader
+from data_processing import TextCleaner
 
 logger = get_logger(__name__)
 
 # Optional imports for LLM and VLM processing
 try:
-    from ..data_processing import LLMProcessor
+    from data_processing import LLMProcessor
     HAS_LLM = True
 except ImportError as e:
     HAS_LLM = False
     logger.warning(f"LLM processor not available: {e}")
 
 try:
-    from ..data_processing import VLMProcessor
+    from data_processing import VLMProcessor
     HAS_VLM = True
 except ImportError as e:
     HAS_VLM = False
     logger.warning(f"VLM processor not available: {e}")
 
-from ..knowledge_extraction import EntityExtractor, RelationExtractor
-from ..knowledge_graph import KnowledgeGraphBuilder
+from knowledge_extraction import EntityExtractor, RelationExtractor
+from knowledge_graph import KnowledgeGraphBuilder
 
 # Set default paths
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -557,13 +557,19 @@ class AIFSKGPipeline:
     
     def _make_serializable(self, obj):
         """Convert objects to JSON serializable format"""
-        import pandas as pd
+        # Optional pandas import for DataFrame handling
+        try:
+            import pandas as pd
+            PANDAS_AVAILABLE = True
+        except ImportError:
+            PANDAS_AVAILABLE = False
+            pd = None
         
         if isinstance(obj, dict):
             return {k: self._make_serializable(v) for k, v in obj.items()}
         elif isinstance(obj, list):
             return [self._make_serializable(item) for item in obj]
-        elif isinstance(obj, pd.DataFrame):
+        elif PANDAS_AVAILABLE and pd is not None and isinstance(obj, pd.DataFrame):
             return obj.to_dict('records')
         elif hasattr(obj, '__dict__'):
             return str(obj)
